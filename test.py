@@ -17,10 +17,8 @@ def onehot_t(list,k):
     onehotsequence_mirna = []
     onehotlabel = []
     onehotsequence_lncrna = []
-    nums = 0
 
     for LinePair in list:
-        nums+=1
         if k == 1:
             miRNAname, lncRNAname, miRNAsequence, lncRNAsequence,miRNAstructure, lncRNAstructure, label = LinePair.strip().split(',')
         else:
@@ -70,7 +68,7 @@ ListTrain = open(ListData_train, 'r').readlines()
 # ListData_test = 'Training-validation-dataset/pmlipred/3000.fasta'   #下载数据集
 #ListData_test = 'Training-validation-dataset/imbalance8-2/pemg_imb800.fasta'   #下载数据集
 ListData_test = 'testdata/imbalance/im_test1056.fasta'   #下载数据集
-#ListData_test = 'testdata/imbalance/im_test1056.fasta'   #下载数据集
+
 
 ListTest = open(ListData_test, 'r').readlines()
 TotalSequenceLength_m=0   
@@ -86,8 +84,6 @@ for LinePair in ListTrain:
         TotalSequenceLength_l = len(lncRNAsequence)
     if len(miRNAsequence) > TotalSequenceLength_m:
         TotalSequenceLength_m = len(miRNAsequence)
-print("l1:",TotalSequenceLength_l)
-print("m1:",TotalSequenceLength_m)
 
 for LinePair in ListTest:
     num2+=1
@@ -103,18 +99,18 @@ print('##################### Load data  #####################\n')
 X_miran_train, X_lncran_train,y_train = onehot_t(ListTrain,1)
 X_miran_test, X_lncran_test,y_test = onehot_t(ListTest,2)
 
-np.random.seed(874)
-np.random.shuffle(X_miran_train)
-np.random.seed(874)
-np.random.shuffle(X_lncran_train)
-np.random.seed(874)
-np.random.shuffle(y_train)
-np.random.seed(35)
-np.random.shuffle(X_miran_test)
-np.random.seed(35)
-np.random.shuffle(X_lncran_test)
-np.random.seed(35)
-np.random.shuffle(y_test)
+# np.random.seed(874)
+# np.random.shuffle(X_miran_train)
+# np.random.seed(874)
+# np.random.shuffle(X_lncran_train)
+# np.random.seed(874)
+# np.random.shuffle(y_train)
+# np.random.seed(35)
+# np.random.shuffle(X_miran_test)
+# np.random.seed(35)
+# np.random.shuffle(X_lncran_test)
+# np.random.seed(35)
+# np.random.shuffle(y_test)
 
 mirna_sam = SAM_BLOCK(TotalSequenceLength_m,4)     #X_train2, y_train2为要训练的数据和标签 合适
 print('##################### mirna_sae completed #####################\n')
@@ -156,7 +152,6 @@ model_ensemble.fit(x=X_ensemble_train, y=[y_train],validation_data=(X_ensemble_t
 y_test_predict = model_ensemble.predict(X_ensemble_test)
 
 model_ensemble.summary()
-print('##################### Ensemble model completed #####################\n')
 TP, FP, TN, FN, SEN, SPE, ACC, F1, AUC = Evaluation(y_test, y_test_predict)
 print('##################### Evalucation completed #####################\n')
 
