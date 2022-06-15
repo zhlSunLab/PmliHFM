@@ -169,7 +169,6 @@ def lncRNAwiththree(inputvalue):
 def high_order_hot(seq,TotalSequenceLength,nums):
 
     l1 = len(seq)
-    print(nums)
     i = TotalSequenceLength // l1  
     j = TotalSequenceLength % l1 
     lnc_seq = seq * i + seq[:j]  
