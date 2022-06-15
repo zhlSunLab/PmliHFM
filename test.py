@@ -113,14 +113,14 @@ X_miran_test, X_lncran_test,y_test = onehot_t(ListTest,2)
 # np.random.shuffle(y_test)
 
 mirna_sam = SAM_BLOCK(TotalSequenceLength_m,4)     #X_train2, y_train2为要训练的数据和标签 合适
-print('##################### mirna_sae completed #####################\n')
+print('##################### mirna_sam completed #####################\n')
 mirna_scm = SCM_BLOCK(TotalSequenceLength_m,4)
-print('##################### mirna_cnn completed #####################\n')
+print('##################### mirna_scm completed #####################\n')
 
 lncrna_sam = SAM_BLOCK(TotalSequenceLength_l,64)
-print('##################### lncrna_sae completed #####################\n')
+print('##################### lncrna_sam completed #####################\n')
 lncrna_scm = SCM_BLOCK(TotalSequenceLength_l,64)
-print('##################### lncrna_cnn completed #####################\n')
+print('##################### lncrna_scm completed #####################\n')
 
 ensemble_in = concatenate([mirna_scm.output, lncrna_scm.output,
                            mirna_sam.output, lncrna_sam.output])
