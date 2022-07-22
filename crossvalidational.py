@@ -3,7 +3,7 @@ from keras.callbacks import EarlyStopping, ModelCheckpoint
 from model import *
 from features import *
 from metrics import *
-
+from keras.utils import np_utils
 from keras.layers.embeddings import Embedding
 
 def Kfold(X, Y, iteration, K):     
@@ -24,7 +24,43 @@ def Kfold(X, Y, iteration, K):
     trainlabel = np.concatenate((trainlabelP, trainlabelL))   
     testlabel = np.array(Y[partYstart : partYend])     
     return traindata, trainlabel, testdata, testlabel
+def onehot(list,k):
+ # set 'A': 0, 'T': 1, 'C': 2, 'G': 3
+    onehotsequence_mirna = []
+    onehotlabel = []
+    onehotsequence_lncrna = []
+    nums = 0
 
+    for LinePair in list:
+        nums+=1
+        if k == 1:
+            miRNAname, lncRNAname, miRNAsequence, lncRNAsequence,miRNAstructure, lncRNAstructure, label = LinePair.strip().split(',')
+        else:
+            miRNAname, lncRNAname, miRNAsequence, lncRNAsequence, label = LinePair.strip().split( ',')
+
+        miRNAsequence = miRNAsequence.upper()
+        miRNAsequence = miRNAsequence.replace('U', 'T')
+        lncRNAsequence = lncRNAsequence.upper()
+        lncRNAsequence = lncRNAsequence.replace('U', 'T')
+
+        onehotsequence_m= hot(miRNAsequence,TotalSequenceLength_m)
+        onehotsequence_l =high_order_hot(lncRNAsequence,TotalSequenceLength_l+2,nums)
+
+
+        onehotsequence_mirna.append(onehotsequence_m)
+        onehotsequence_lncrna.append(onehotsequence_l)
+
+        onehotlabel.append(label.strip('\n'))
+
+
+    X_miran= np.array(onehotsequence_mirna).reshape(-1,TotalSequenceLength_m, 4,1)
+    X_miran = X_miran.astype('float32')     #保留小数
+    X_lncran= np.array(onehotsequence_lncrna).reshape(-1,TotalSequenceLength_l, 64,1)
+    X_lncran = X_lncran.astype('float32')     #保留小数
+    Y = np.array(onehotlabel).astype('int').reshape(-1, 1)   #Y[20,1]
+    Y = np_utils.to_categorical(Y, num_classes=2)       #Y[20,2]
+
+    return X_miran, X_lncran,Y
 
 ListData_test = 'Training-validation-dataset/pmlipemg/7680.fasta'  
 ListTrain = open(ListData_test, 'r').readlines()
@@ -41,7 +77,7 @@ for LinePair in ListTrain:
         TotalSequenceLength_m = len(miRNAsequence)
 
 print('##################### Load data completed #####################\n')
-X_miran, X_lncran,y = onehot(ListTrain)     
+X_miran, X_lncran,y = onehot(ListTrain,1)     
 print('##################### onehot completed #####################\n')
 TPsum, FPsum, TNsum, FNsum, SENsum, SPEsum, ACCsum, F1sum, AUCsum = [], [], [], [], [], [], [], [], []
 for iteration in range(10):     #做十次10折交叉验证取平均值
